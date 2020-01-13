@@ -12,7 +12,6 @@ import com.ttoonic.flow.Interface.FragmentInteractive;
 
 public abstract class BaseFragment extends Fragment implements ActivityInteractive  {
     protected FragmentInteractive interactive;
-    protected ActivityInteractive activityInteractive;
     protected Fragment fragment;
 
 
@@ -22,6 +21,16 @@ public abstract class BaseFragment extends Fragment implements ActivityInteracti
 
     @Override
     public void activityCallback(Object object) {
+
+    }
+
+    @Override
+    public void activitySensorChanged(Object object) {
+
+    }
+
+    @Override
+    public void activityAccuracyChanged(Object object, int accuracy) {
 
     }
 

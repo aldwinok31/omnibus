@@ -6,14 +6,14 @@
     android:layout_height="match_parent"
     android:orientation="vertical"
     android:gravity="center"
+    android:background="@color/colorPrimary"
     tools:context=".MainActivity">
 
     <ImageView
         android:layout_gravity="center"
         android:src="@drawable/mysafetylarge"
         android:layout_width="wrap_content"
-        android:layout_marginBottom="200dp"
+        android:layout_marginBottom="25dp"
         android:layout_height="wrap_content"/>
-
 
 </LinearLayout>

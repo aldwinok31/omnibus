@@ -89,8 +89,8 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
                 contact.setError("Invalid contact number");
                 valid_numbers++;
             }
-            if(team.getText().equals("")){
-                contact.setError("Select a field to login");
+            if(team.getText().equals("") || team.getText().length() == 0){
+                team.setError("Select a field to login");
                 valid_numbers++;
             }
 

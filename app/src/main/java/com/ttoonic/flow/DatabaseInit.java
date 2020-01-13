@@ -84,7 +84,9 @@ public final class DatabaseInit {
                     for (QueryDocumentSnapshot documentSnapshot : task.getResult()){
                         if(documentSnapshot.contains("team")){
                          if(databaseInteractive != null){
-                            databaseInteractive.onDatabaseSuccess(false,documentSnapshot.toObject(User.class),"Already exist");
+                             User object = documentSnapshot.toObject(User.class);
+                             object.setTeam(entry);
+                            databaseInteractive.onDatabaseSuccess(false,object,"Already exist");
                             break;
                          }
                         }
@@ -104,46 +106,33 @@ public final class DatabaseInit {
     }
 
     public void check_data(final User user){
+
         db.collection("users")
+                .whereEqualTo("phone_number",user.getPhone_number())
+                .whereEqualTo("username",user.getUsername())
                 .get()
                 .addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                    @Override
-                    public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                        if (task.isSuccessful()) {
-                            for (QueryDocumentSnapshot document : task.getResult()) {
-                                if(document.getString("username").equals(user.getUsername())){
-                                    if(databaseInteractive != null){
-                                        databaseInteractive.onDatabaseSuccess(false,1,"Already exist");
-                                    }
-                                    break;
-                                }
-                                else{
-                                    create_user(user);
-                                    break;
-                                }
-                            }
-                        } else {
-                            if(databaseInteractive != null){
-                                databaseInteractive.onDatabaseSuccess(false,101,"Error has occured");
-                            }
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if (task.isComplete()){
+                    if(task.getResult().isEmpty()){
+                        create_user(user);
+                    }
+                    else {
+                        if(databaseInteractive != null){
+                            databaseInteractive.onDatabaseSuccess(false,1,"Already exist");
                         }
                     }
-                }).addOnFailureListener(new OnFailureListener() {
+                }
+            }
+        }).addOnFailureListener(new OnFailureListener() {
             @Override
             public void onFailure(@NonNull Exception e) {
                 if(databaseInteractive != null){
                     databaseInteractive.onDatabaseSuccess(false,101,"Error has occured " + e.toString());
                 }
             }
-        }).addOnCanceledListener(new OnCanceledListener() {
-            @Override
-            public void onCanceled() {
-                if (databaseInteractive != null) {
-                    databaseInteractive.onDatabaseSuccess(true, 2,"Canceled");
-                }
-            }
-        })
-        ;
+        });
 
     }
 

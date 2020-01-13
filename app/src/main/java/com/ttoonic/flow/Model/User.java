@@ -9,7 +9,7 @@ import java.io.Serializable;
 public class User  implements Parcelable {
 
     private String username;
-    private String phone;
+    private String phone_number;
     private String password;
     private String team;
 
@@ -24,7 +24,7 @@ public class User  implements Parcelable {
         this.team = team;
      this.username = username;
     this.password = password;
-    this.phone = phone;
+    this.phone_number = phone;
     }
 
     public String getTeam() {
@@ -33,8 +33,9 @@ public class User  implements Parcelable {
 
     protected User(Parcel in) {
         username = in.readString();
-        phone = in.readString();
+        phone_number = in.readString();
         password = in.readString();
+        team = in.readString();
     }
 
     public static final Creator<User> CREATOR = new Creator<User>() {
@@ -58,7 +59,11 @@ public class User  implements Parcelable {
     }
 
     public String getPhone_number() {
-        return phone;
+        return phone_number;
+    }
+
+    public void setTeam(String team) {
+        this.team = team;
     }
 
     @Override
@@ -69,7 +74,8 @@ public class User  implements Parcelable {
     @Override
     public void writeToParcel(Parcel dest, int flags) {
         dest.writeString(username);
-        dest.writeString(phone);
+        dest.writeString(phone_number);
         dest.writeString(password);
+        dest.writeString(team);
     }
 }
