@@ -9,16 +9,29 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 
 import com.ttoonic.flow.Interface.FragmentInteractive;
+import com.ttoonic.flow.Model.User;
 import com.ttoonic.flow.R;
 
-public class SettingFragment extends BaseFragment {
-    public SettingFragment(FragmentInteractive fragmentInteractive) {
+public class HazardFragment extends BaseFragment {
+    public HazardFragment(FragmentInteractive fragmentInteractive) {
         super(fragmentInteractive);
     }
 
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return inflater.inflate(R.layout.fragment_setting,null);
+        return inflater.inflate(R.layout.fragment_hazard,null);
+    }
+    @Override
+    public void onStart() {
+        super.onStart();
+        this.fragment = this;
+    }
+    @Override
+    public void activityCallback(Object object) {
+        super.activityCallback(object);
+        if(object instanceof User){
+        }
+
     }
 }

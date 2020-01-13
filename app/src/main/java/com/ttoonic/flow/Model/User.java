@@ -1,16 +1,75 @@
 package com.ttoonic.flow.Model;
 
+import android.os.Parcel;
+import android.os.Parcelable;
 import android.util.Base64;
 
-public class User {
-    private String first_name;
-    private String last_name;
-    private String email_address;
-    private Base64 password;
-    public User(String first_name,String last_name,String email_address, Base64 password) {
-    this.first_name = first_name;
-    this.last_name = last_name;
-    this.email_address = email_address;
+import java.io.Serializable;
+
+public class User  implements Parcelable {
+
+    private String username;
+    private String phone;
+    private String password;
+    private String team;
+
+    public User() {
+    }
+
+    public User(String username
+            , String password
+            , String phone
+                ,String team
+    ) {
+        this.team = team;
+     this.username = username;
     this.password = password;
+    this.phone = phone;
+    }
+
+    public String getTeam() {
+        return team;
+    }
+
+    protected User(Parcel in) {
+        username = in.readString();
+        phone = in.readString();
+        password = in.readString();
+    }
+
+    public static final Creator<User> CREATOR = new Creator<User>() {
+        @Override
+        public User createFromParcel(Parcel in) {
+            return new User(in);
+        }
+
+        @Override
+        public User[] newArray(int size) {
+            return new User[size];
+        }
+    };
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getUsername() {
+        return username;
+    }
+
+    public String getPhone_number() {
+        return phone;
+    }
+
+    @Override
+    public int describeContents() {
+        return 0;
+    }
+
+    @Override
+    public void writeToParcel(Parcel dest, int flags) {
+        dest.writeString(username);
+        dest.writeString(phone);
+        dest.writeString(password);
     }
 }

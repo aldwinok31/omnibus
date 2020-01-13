@@ -1,0 +1,48 @@
+{
+  "project_info": {
+    "project_number": "956991471761",
+    "firebase_url": "https://my-safety-omnibus.firebaseio.com",
+    "project_id": "my-safety-omnibus",
+    "storage_bucket": "my-safety-omnibus.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:956991471761:android:2aaf6b2df9e943b8ceff30",
+        "android_client_info": {
+          "package_name": "com.ttoonic.flow"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "956991471761-d50ibo47nt956s91pr7cbn3n1pno2lji.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.ttoonic.flow",
+            "certificate_hash": "79b88af31c0b8553f6b48860bb3c4a013cac857f"
+          }
+        },
+        {
+          "client_id": "956991471761-kttuc70ejj61phqdaasfm4nsd39gg53t.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBG7CH4igGxjyRxSMOgn1XTgrODJHknND0"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "956991471761-kttuc70ejj61phqdaasfm4nsd39gg53t.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

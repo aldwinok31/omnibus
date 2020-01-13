@@ -85,9 +85,9 @@ public abstract class BaseActivity extends AppCompatActivity {
         if(fragment != null){
             getSupportFragmentManager()
                     .beginTransaction()
+                    .setCustomAnimations(android.R.animator.fade_in,android.R.animator.fade_out)
                     .replace(R.id.fragment_holder,fragment)
                     .commit();
-            Log.d("FRAGMENT_LOAD", "load_fragment: ");
             return true;
         }
         return false;

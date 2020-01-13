@@ -10,11 +10,14 @@ import androidx.fragment.app.Fragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ttoonic.flow.Fragment.HomeFragment;
 import com.ttoonic.flow.Fragment.ReportFragment;
-import com.ttoonic.flow.Fragment.SettingFragment;
+import com.ttoonic.flow.Fragment.HazardFragment;
+import com.ttoonic.flow.Interface.ActivityInteractive;
 import com.ttoonic.flow.Interface.FragmentInteractive;
 
 public abstract class TabBaseActivity extends BaseActivity implements FragmentInteractive, BottomNavigationView.OnNavigationItemSelectedListener{
     private FragmentInteractive fragmentInteractive;
+    private ActivityInteractive activityInteractive;
+
     public void set_interactive(){
         this.fragmentInteractive = this;
     }
@@ -39,7 +42,7 @@ public abstract class TabBaseActivity extends BaseActivity implements FragmentIn
     }
 
     @Override
-    public Fragment onFragmentInteract(Fragment fragment) {
+    public Fragment onFragmentInteract(Fragment fragment,Object object) {
         return null;
     }
 
@@ -55,7 +58,7 @@ public abstract class TabBaseActivity extends BaseActivity implements FragmentIn
                 fragment = new ReportFragment(this);
                 break;
             case R.id.action_setting:
-                fragment = new SettingFragment(this);
+                fragment = new HazardFragment(this);
                 break;
         }
 
