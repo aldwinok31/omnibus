@@ -4,6 +4,6 @@ import androidx.fragment.app.Fragment;
 
 public interface FragmentInteractive {
 
-    public Fragment onFragmentInteract(Fragment fragment);
+    Fragment onFragmentInteract(Fragment fragment,Object object);
 
 }

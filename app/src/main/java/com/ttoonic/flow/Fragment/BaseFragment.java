@@ -2,18 +2,42 @@ package com.ttoonic.flow.Fragment;
 
 import android.content.Context;
 import android.content.Intent;
+import android.view.View;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.ttoonic.flow.Interface.ActivityInteractive;
 import com.ttoonic.flow.Interface.FragmentInteractive;
 
-public class BaseFragment extends Fragment {
+public abstract class BaseFragment extends Fragment implements ActivityInteractive  {
     protected FragmentInteractive interactive;
-    public BaseFragment(FragmentInteractive fragmentInteractive) {
+    protected Fragment fragment;
+
+
+    public BaseFragment(FragmentInteractive fragmentInteractive ) {
         this.interactive = fragmentInteractive;
     }
 
+    @Override
+    public void activityTemperatureChange(Object object) {
+
+    }
+
+    @Override
+    public void activityCallback(Object object) {
+
+    }
+
+    @Override
+    public void activitySensorChanged(Object object) {
+
+    }
+
+    @Override
+    public void activityAccuracyChanged(Object object, int accuracy) {
+
+    }
 
     @Nullable
     @Override
@@ -29,7 +53,7 @@ public class BaseFragment extends Fragment {
     @Override
     public void onStart() {
         super.onStart();
-        interactive.onFragmentInteract(this);
+        interactive.onFragmentInteract(this,this);
     }
 
     @Override
@@ -51,5 +75,6 @@ public class BaseFragment extends Fragment {
     public void onDestroy() {
         super.onDestroy();
     }
+
 
 }

@@ -4,6 +4,7 @@ package com.ttoonic.flow;
 import android.os.Bundle;
 
 import com.ttoonic.flow.Activity.Activity_Fragment_Holder;
+import com.ttoonic.flow.Activity.Auth_Activity;
 
 
 public class MainActivity extends BaseActivity {
@@ -16,7 +17,7 @@ public class MainActivity extends BaseActivity {
 
     @Override
     protected boolean start() {
-        app_timer_to_activity(1000,3000,Activity_Fragment_Holder.class).start();
+        app_timer_to_activity(1000,3000, Auth_Activity.class).start();
         return false;
     }
 
