@@ -79,4 +79,5 @@ public class Auth_Activity extends BaseActivity implements FragmentInteractive, 
     public void onBackPressed() {
 
     }
+
 }

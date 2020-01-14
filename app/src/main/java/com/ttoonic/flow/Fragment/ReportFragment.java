@@ -20,7 +20,6 @@ import com.ttoonic.flow.Interface.FragmentInteractive;
 import com.ttoonic.flow.Model.User;
 import com.ttoonic.flow.R;
 
-import java.io.ByteArrayOutputStream;
 
 public class ReportFragment extends BaseFragment implements View.OnClickListener{
     private View view;
@@ -31,14 +30,13 @@ public class ReportFragment extends BaseFragment implements View.OnClickListener
     @Nullable
     @Override
     public View onCreateView(@NonNull LayoutInflater inflater, @Nullable ViewGroup container, @Nullable Bundle savedInstanceState) {
-        return this.view = inflater.inflate(R.layout.fragment_report,null);
+        return this.view = inflater.inflate(R.layout.fragment_report_list,null);
     }
     @Override
     public void onStart() {
         super.onStart();
         this.fragment = this;
-        ImageButton imageButton = this.view.findViewById(R.id.camera_selector);
-        imageButton.setOnClickListener(this);
+
 
     }
     @Override
@@ -52,30 +50,12 @@ public class ReportFragment extends BaseFragment implements View.OnClickListener
     @Override
     public void onActivityResult(int requestCode, int resultCode, Intent data) {
         super.onActivityResult(requestCode, resultCode, data);
-        if (resultCode == Activity.RESULT_OK) {
-
-
-            Bitmap bmp = (Bitmap) data.getExtras().get("data");
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-
-            bmp.compress(Bitmap.CompressFormat.PNG, 100, stream);
-            byte[] byteArray = stream.toByteArray();
-
-            Bitmap bitmap = BitmapFactory.decodeByteArray(byteArray, 0,
-                    byteArray.length);
-            ImageView imageView = this.view.findViewById(R.id.image_capture);
-            imageView.setImageBitmap(bitmap);
-
-
-        }
-
 
     }
 
     @Override
     public void onClick(View v) {
-        Intent intent = new Intent(MediaStore.ACTION_IMAGE_CAPTURE);
-        startActivityForResult(intent,1001);
+
     }
 
     @Override

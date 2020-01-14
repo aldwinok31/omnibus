@@ -20,6 +20,11 @@ public abstract class BaseFragment extends Fragment implements ActivityInteracti
     }
 
     @Override
+    public void activityTemperatureChange(Object object) {
+
+    }
+
+    @Override
     public void activityCallback(Object object) {
 
     }

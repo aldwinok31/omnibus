@@ -1,36 +1,54 @@
 package com.ttoonic.flow.Activity;
 
+import android.app.AlertDialog;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
 import android.hardware.SensorManager;
+import android.os.BatteryManager;
+import android.os.Build;
 import android.os.Bundle;
-import android.util.Base64;
+import android.os.HardwarePropertiesManager;
 import android.util.Log;
-import android.widget.ImageView;
-import android.widget.Toast;
+import android.view.LayoutInflater;
+import android.view.View;
+import android.widget.Button;
+import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
-import com.ttoonic.flow.BaseActivity;
+import com.ttoonic.flow.DatabaseInit;
 import com.ttoonic.flow.Interface.ActivityInteractive;
+import com.ttoonic.flow.Interface.DatabaseInteractive;
+import com.ttoonic.flow.Model.Fault;
 import com.ttoonic.flow.Model.User;
 import com.ttoonic.flow.R;
+import com.ttoonic.flow.Service.BatteryReciever;
 import com.ttoonic.flow.TabBaseActivity;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.util.ArrayList;
+import java.util.Scanner;
 
-public class Activity_Fragment_Holder extends TabBaseActivity implements SensorEventListener {
+public class Activity_Fragment_Holder extends TabBaseActivity implements SensorEventListener
+        , DatabaseInteractive, View.OnClickListener,BatteryReciever.onBatteryChange {
     private User user;
     private ActivityInteractive activityInteractive;
     private SensorManager sensorManager;
     private Sensor temperature;
+    private DatabaseInit databaseInit;
+    private ArrayList<String> stringsID;
+
     @Override
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -43,7 +61,16 @@ public class Activity_Fragment_Holder extends TabBaseActivity implements SensorE
         this.user = getIntent().getParcelableExtra("User_main");
         this.sensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
         temperature = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
+        this.databaseInit = new DatabaseInit();
+        this.databaseInit.addDatabaseSuccessListener(this);
+        this.databaseInit.add_database_listener(this.user.getTeam());
+        this.stringsID = new ArrayList<>();
+
+        BatteryReciever batteryReciever = new BatteryReciever(this);
+        IntentFilter intentFilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        this.registerReceiver(batteryReciever,intentFilter);
     }
+
 
     @Override
     protected boolean start() {
@@ -56,16 +83,23 @@ public class Activity_Fragment_Holder extends TabBaseActivity implements SensorE
             this.activityInteractive = (ActivityInteractive) object;
             ((ActivityInteractive) object).activityCallback(this.user);
         }
+        if(object instanceof Boolean){
+            if((Boolean) object) {
+                View view = findViewById(R.id.loading_screen);
+                view.setVisibility(View.VISIBLE);
+            }
+
+            else{
+                View view = findViewById(R.id.loading_screen);
+                view.setVisibility(View.GONE);
+            }
+        }
         return super.onFragmentInteract(fragment,object);
     }
 
     @Override
     public void onBackPressed() {
-        if (getSupportFragmentManager().getBackStackEntryCount() == 1 ) {
-            this.finish();
-        } else {
-            getSupportFragmentManager().popBackStack();
-        }
+
     }
 
     @Override
@@ -109,6 +143,59 @@ public class Activity_Fragment_Holder extends TabBaseActivity implements SensorE
     @Override
     protected void onRestoreInstanceState(@NonNull Bundle savedInstanceState) {
         super.onRestoreInstanceState(savedInstanceState);
+    }
+
+    private AlertDialog alertDialog;
+
+    public void showDialog(String title,String incident){
+
+        LayoutInflater layoutInflater =this.getLayoutInflater();
+        View view = layoutInflater.inflate(R.layout.dialog_reports,null);
+
+        Button button = view.findViewById(R.id.button_safe);
+        TextView textView = view.findViewById(R.id.alert_incident_dialog);
+        textView.setText(incident + " DETECTED.");
+
+        button.setOnClickListener(this);
+        AlertDialog.Builder alert = new AlertDialog.Builder(this)
+                .setView(view).setIcon(R.drawable.mysafety).setTitle(title);
+        alert.create();
+        alertDialog = alert.show();
+
+    }
+
+    private Fault fault;
+    @Override
+    public void onDatabaseSuccess(boolean data, Object object, String message) {
+        if(object instanceof Fault){
+            // Returns ID
+            this.stringsID.add(message);
+
+             this.fault = (Fault) object;
+
+             showDialog(((Fault) object).getCategory(),((Fault) object).getType());
+
+        }
+        if(object instanceof  Boolean){
+            this.alertDialog.dismiss();
+        }
+    }
+
+    @Override
+    public void onClick(View v) {
+        if(v.getId() == R.id.button_safe) {
+            if (this.fault != null){
+                this.databaseInit.update_alert(this.user,this.stringsID);
+            }
+        }
+    }
+
+    @Override
+    public void onBatteryTempChange(float temperature) {
+        if(this.activityInteractive != null){
+            Log.d("temp", "onBatteryTempChange: ");
+          activityInteractive.activityTemperatureChange(temperature);
+        }
     }
 }
 
