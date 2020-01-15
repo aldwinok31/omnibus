@@ -15,6 +15,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -37,6 +38,7 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -68,6 +70,7 @@ public class SendReportFragment extends BaseFragment implements View.OnClickList
         flood.setOnClickListener(this);
         quake.setOnClickListener(this);
         incident.setOnClickListener(this);
+        CheckBox checkbox = this.view.findViewById(R.id.safe_box);
     }
     @Override
     public void activityCallback(Object object) {
@@ -214,7 +217,9 @@ public class SendReportFragment extends BaseFragment implements View.OnClickList
                 Toast.makeText(getContext(), "Upload not complete", Toast.LENGTH_SHORT).show();
                 return;
             }
+            CheckBox checkbox = this.view.findViewById(R.id.safe_box);
             if(valids == 0){
+
 
                     this.interactive.onFragmentInteract(this,true);
 
@@ -225,6 +230,23 @@ public class SendReportFragment extends BaseFragment implements View.OnClickList
                     this.fault.setType(incident);
                     this.fault.setCreator(this.user.getUsername());
                     this.fault.setCategory(this.user.getTeam());
+
+                if(checkbox.isChecked()){
+                    ArrayList<String> arrayList = new ArrayList<>();
+                    arrayList.add(this.user.getUsername());
+                    this.fault.setMarked_safe(arrayList);
+                    arrayList.clear();
+                    arrayList.add("DATA");
+                    this.fault.setMarked_unsafe(arrayList);
+                }
+                else{
+                    ArrayList<String> arrayList = new ArrayList<>();
+                    arrayList.add(this.user.getUsername());
+                    this.fault.setMarked_unsafe(arrayList);
+                    arrayList.clear();
+                    arrayList.add("DATA");
+                    this.fault.setMarked_safe(arrayList);
+                }
 
 
                     String file_path = persistImage(this.bitmap,this.fault.getTitle());

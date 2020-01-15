@@ -3,6 +3,7 @@ package com.ttoonic.flow.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Fault implements Parcelable {
@@ -14,13 +15,16 @@ public class Fault implements Parcelable {
     private String type;
     private String creator;
     private String category;
-    private Marked marked;
+    private ArrayList<String> marked_safe;
+    private ArrayList<String> marked_unsafe;
 
     public void setCreator(String creator) {
         this.creator = creator;
     }
 
-    public Fault(String title,String category, String description, String type, double credibility, Date timestamp, String imgpath, String creator,Marked marked) {
+    public Fault(String title,String category, String description, String type,
+                 double credibility, Date timestamp,
+                 String imgpath, String creator,ArrayList<String> marked, ArrayList<String> mark_unsafe) {
         this.title = title;
         this.description = description;
         this.credibility = credibility;
@@ -29,15 +33,24 @@ public class Fault implements Parcelable {
         this.creator = creator;
         this.type = type;
         this.category = category;
-        this.marked = marked;
+        this.marked_safe = marked;
+        this.marked_unsafe = mark_unsafe;
     }
 
-    public Marked getMarked() {
-        return marked;
+    public ArrayList<String> getMarked_safe() {
+        return marked_safe;
     }
 
-    public void setMarked(Marked marked) {
-        this.marked = marked;
+    public void setMarked_safe( ArrayList<String> marked_safe) {
+        this.marked_safe = marked_safe;
+    }
+
+    public  ArrayList<String> getMarked_unsafe() {
+        return marked_unsafe;
+    }
+
+    public void setMarked_unsafe( ArrayList<String> marked_unsafe) {
+        this.marked_unsafe = marked_unsafe;
     }
 
     public String getCategory() {

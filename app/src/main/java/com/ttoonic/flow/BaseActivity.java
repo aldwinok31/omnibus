@@ -60,7 +60,8 @@ public abstract class BaseActivity extends AppCompatActivity {
     @Override
     public void onRequestPermissionsResult(int requestCode, String permissions[], int[] grantResults) {
         switch (requestCode) {
-
+            case 1: start();
+            break;
         }
     }
 
@@ -68,7 +69,7 @@ public abstract class BaseActivity extends AppCompatActivity {
 
     @Nullable
     protected CountDownTimer app_timer_to_activity(long f , long i, final Class activity){
-        CountDownTimer countDownTimer = new CountDownTimer(5000,1000) {
+        CountDownTimer countDownTimer = new CountDownTimer(2000,1000) {
             @Override
             public void onTick(long millisUntilFinished) {
             }

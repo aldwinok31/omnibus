@@ -13,6 +13,7 @@
         <TextView
             android:layout_width="match_parent"
             android:text="Creator"
+            android:textStyle="bold"
             android:id="@+id/creator_recycler"
             android:layout_height="wrap_content"/>
         <ImageView
@@ -23,6 +24,7 @@
             android:id="@+id/title_recycler"
             android:layout_width="match_parent"
             android:text="title"
+            android:textStyle="bold"
             android:layout_height="wrap_content"/>
         <TextView
             android:id="@+id/description_recycler"

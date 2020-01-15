@@ -1,11 +1,16 @@
 package com.ttoonic.flow.Activity;
 
 import android.app.AlertDialog;
+import android.app.Notification;
+import android.app.NotificationChannel;
+import android.app.NotificationManager;
+import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Color;
 import android.hardware.Sensor;
 import android.hardware.SensorEvent;
 import android.hardware.SensorEventListener;
@@ -22,6 +27,7 @@ import android.widget.TextView;
 
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
+import androidx.core.app.NotificationCompat;
 import androidx.fragment.app.Fragment;
 
 import com.ttoonic.flow.DatabaseInit;
@@ -63,7 +69,7 @@ public class Activity_Fragment_Holder extends TabBaseActivity implements SensorE
         temperature = sensorManager.getDefaultSensor(Sensor.TYPE_ACCELEROMETER);
         this.databaseInit = new DatabaseInit();
         this.databaseInit.addDatabaseSuccessListener(this);
-        this.databaseInit.add_database_listener(this.user.getTeam());
+        this.databaseInit.add_database_listener(this.user.getTeam(),this.user.getUsername());
         this.stringsID = new ArrayList<>();
 
         BatteryReciever batteryReciever = new BatteryReciever(this);
@@ -153,14 +159,52 @@ public class Activity_Fragment_Holder extends TabBaseActivity implements SensorE
         View view = layoutInflater.inflate(R.layout.dialog_reports,null);
 
         Button button = view.findViewById(R.id.button_safe);
+        Button button2 = view.findViewById(R.id.button_unsafe);
         TextView textView = view.findViewById(R.id.alert_incident_dialog);
         textView.setText(incident + " DETECTED.");
 
         button.setOnClickListener(this);
+        button2.setOnClickListener(this);
         AlertDialog.Builder alert = new AlertDialog.Builder(this)
-                .setView(view).setIcon(R.drawable.mysafety).setTitle(title);
+                .setView(view).setIcon(R.drawable.mysafety).setTitle(title + " Group.");
         alert.create();
         alertDialog = alert.show();
+
+    }
+
+    public void createNotif(String title,String incident,String desc){
+        NotificationManager notificationManager = (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+        Intent intent = new Intent(getApplicationContext(),this.getClass());
+        intent.putExtra("User_main",this.user);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this,1003,intent,PendingIntent.FLAG_UPDATE_CURRENT);
+        if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+            NotificationChannel notificationChannel = new NotificationChannel("Report", title,
+                    NotificationManager.IMPORTANCE_DEFAULT);
+
+            // Configure the notification channel.
+            notificationChannel.setDescription(desc);
+            notificationChannel.enableLights(true);
+            notificationChannel.setVibrationPattern(new long[]{0, 1000, 500, 1000});
+            notificationChannel.enableVibration(true);
+            notificationManager.createNotificationChannel(notificationChannel);
+        }
+
+            NotificationCompat.Builder notificationBuilder = new NotificationCompat.Builder(this, "Report");
+
+
+            notificationBuilder.setAutoCancel(true)
+                    .setDefaults(Notification.DEFAULT_ALL)
+                    .setWhen(System.currentTimeMillis())
+                    .setSmallIcon(R.drawable.mysafety)
+                    .setTicker(incident)
+                    .setPriority(Notification.PRIORITY_MAX)
+                    .setContentTitle(incident + " Alert - " + title + " Group." )
+                    .setContentText(desc)
+                    .setContentInfo(desc);
+
+            notificationBuilder.setContentIntent(pendingIntent);
+            notificationManager.notify(/*notification id*/1, notificationBuilder.build());
+
 
     }
 
@@ -174,6 +218,7 @@ public class Activity_Fragment_Holder extends TabBaseActivity implements SensorE
              this.fault = (Fault) object;
 
              showDialog(((Fault) object).getCategory(),((Fault) object).getType());
+             createNotif(((Fault) object).getCategory(),((Fault) object).getType(),((Fault) object).getDescription());
 
         }
         if(object instanceof  Boolean){
@@ -185,15 +230,23 @@ public class Activity_Fragment_Holder extends TabBaseActivity implements SensorE
     public void onClick(View v) {
         if(v.getId() == R.id.button_safe) {
             if (this.fault != null){
-                this.databaseInit.update_alert(this.user,this.stringsID);
+                this.alertDialog.dismiss();
+                this.databaseInit.update_alert(this.user,this.stringsID,"marked_safe");
             }
+            this.alertDialog.dismiss();
+        }
+        if(v.getId() == R.id.button_unsafe) {
+            if (this.fault != null){
+                this.alertDialog.dismiss();
+                this.databaseInit.update_alert(this.user,this.stringsID,"marked_unsafe");
+            }
+            this.alertDialog.dismiss();
         }
     }
 
     @Override
     public void onBatteryTempChange(float temperature) {
         if(this.activityInteractive != null){
-            Log.d("temp", "onBatteryTempChange: ");
           activityInteractive.activityTemperatureChange(temperature);
         }
     }

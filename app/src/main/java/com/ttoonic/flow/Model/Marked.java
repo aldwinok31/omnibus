@@ -4,17 +4,12 @@ import android.os.Parcel;
 import android.os.Parcelable;
 
 public class Marked implements Parcelable {
-    private User user;
+
     private String safe;
     private String username;
 
-    public User getUser() {
-        return user;
-    }
 
-    public void setUser(User user) {
-        this.user = user;
-    }
+
 
     public String getSafe() {
         return safe;
@@ -33,7 +28,6 @@ public class Marked implements Parcelable {
     }
 
     public Marked(User user, String safe , String username) {
-        this.user = user;
         this.safe = safe;
         this.username = username;
     }
