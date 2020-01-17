@@ -17,24 +17,54 @@ public class Fault implements Parcelable {
     private String category;
     private ArrayList<String> marked_safe;
     private ArrayList<String> marked_unsafe;
+    private Double latitude;
+    private Double longitude;
+    private Date expiration;
+
 
     public void setCreator(String creator) {
         this.creator = creator;
     }
 
-    public Fault(String title,String category, String description, String type,
-                 double credibility, Date timestamp,
-                 String imgpath, String creator,ArrayList<String> marked, ArrayList<String> mark_unsafe) {
+    public Fault(String title, String description, double credibility, Date timestamp, String imgpath, String type, String creator, String category, ArrayList<String> marked_safe,
+                 ArrayList<String> marked_unsafe, Double latitude, Double longitude, Date expiration) {
         this.title = title;
         this.description = description;
         this.credibility = credibility;
         this.timestamp = timestamp;
         this.imgpath = imgpath;
-        this.creator = creator;
         this.type = type;
+        this.creator = creator;
         this.category = category;
-        this.marked_safe = marked;
-        this.marked_unsafe = mark_unsafe;
+        this.marked_safe = marked_safe;
+        this.marked_unsafe = marked_unsafe;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.expiration = expiration;
+    }
+
+    public Date getExpiration() {
+        return expiration;
+    }
+
+    public void setExpiration(Date expiration) {
+        this.expiration = expiration;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
     }
 
     public ArrayList<String> getMarked_safe() {

@@ -28,6 +28,7 @@ public abstract class BaseActivity extends AppCompatActivity {
     protected void onCreate(@Nullable Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         request_permission();
+
     }
 
     private boolean request_permission(){
@@ -35,7 +36,11 @@ public abstract class BaseActivity extends AppCompatActivity {
         String[] PERMISSIONS = {
                 Manifest.permission.READ_EXTERNAL_STORAGE,
                 android.Manifest.permission.WRITE_EXTERNAL_STORAGE,
-                android.Manifest.permission.CAMERA
+                android.Manifest.permission.CAMERA,
+                Manifest.permission.ACCESS_FINE_LOCATION,
+                Manifest.permission.ACCESS_COARSE_LOCATION,
+                Manifest.permission.READ_SMS,
+                Manifest.permission.RECEIVE_SMS
         };
 
         if (!hasPermissions(this, PERMISSIONS)) {
@@ -76,7 +81,8 @@ public abstract class BaseActivity extends AppCompatActivity {
 
             @Override
             public void onFinish() {
-                startActivity(new Intent(getApplication(),activity));
+                Intent intent = new Intent(getApplicationContext(),activity);
+                startActivity(intent);
             }
         };
         return countDownTimer;

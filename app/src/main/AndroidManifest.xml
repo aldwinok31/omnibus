@@ -7,6 +7,10 @@
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.INTERNET" />
+    <uses-permission android:name="android.permission.RECEIVE_SMS" />
+    <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.ACCESS_FINE_LOCATION"/>
+    <uses-permission android:name="android.permission.ACCESS_COARSE_LOCATION"/>
     <application
         android:allowBackup="true"
         android:icon="@drawable/mysafety"
@@ -14,11 +18,21 @@
         android:roundIcon="@drawable/mysafety"
         android:supportsRtl="true"
         android:theme="@style/AppTheme">
+        <meta-data android:name="com.google.android.geo.API_KEY"
+            android:value="@string/map_key"></meta-data>
         <activity android:name=".MainActivity"
             android:screenOrientation="portrait">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
                 <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
+        </activity>
+        <activity android:name=".Activity.Activity_SMS"
+            android:screenOrientation="portrait">
+            <intent-filter>
+                <action android:name="android.intent.action.ACTION_DEFAULT" />
+
+                <category android:name="android.intent.category.ALTERNATIVE" />
             </intent-filter>
         </activity>
         <activity android:name=".Activity.Activity_Fragment_Holder"
@@ -40,6 +54,11 @@
         </activity>
         <receiver android:name=".Service.BatteryReciever">
 
+        </receiver>
+        <receiver android:name=".Service.SMSReciever">
+            <intent-filter>
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
+            </intent-filter>
         </receiver>
     </application>
 
