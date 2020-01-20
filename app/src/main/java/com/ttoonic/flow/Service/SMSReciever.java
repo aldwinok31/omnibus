@@ -15,8 +15,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.ttoonic.flow.Activity.Activity_SMS;
-import com.ttoonic.flow.MainActivity;
-import com.ttoonic.flow.R;
+
 
 public class SMSReciever extends BroadcastReceiver {
 
