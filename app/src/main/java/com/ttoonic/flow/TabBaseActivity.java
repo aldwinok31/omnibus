@@ -8,15 +8,19 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 
+import com.google.android.gms.maps.GoogleMap;
+import com.google.android.gms.maps.OnMapReadyCallback;
+import com.google.android.gms.maps.SupportMapFragment;
 import com.google.android.material.bottomnavigation.BottomNavigationView;
 import com.ttoonic.flow.Fragment.HomeFragment;
+import com.ttoonic.flow.Fragment.MapFragment;
 import com.ttoonic.flow.Fragment.ReportFragment;
 import com.ttoonic.flow.Fragment.HazardFragment;
 import com.ttoonic.flow.Fragment.SendReportFragment;
 import com.ttoonic.flow.Interface.ActivityInteractive;
 import com.ttoonic.flow.Interface.FragmentInteractive;
 
-public abstract class TabBaseActivity extends BaseActivity implements FragmentInteractive, BottomNavigationView.OnNavigationItemSelectedListener{
+public abstract class TabBaseActivity extends BaseActivity implements FragmentInteractive, BottomNavigationView.OnNavigationItemSelectedListener , OnMapReadyCallback {
     private FragmentInteractive fragmentInteractive;
     private ActivityInteractive activityInteractive;
     protected BottomNavigationView navigationView;
@@ -72,9 +76,17 @@ public abstract class TabBaseActivity extends BaseActivity implements FragmentIn
             case R.id.action_notification:
                 fragment = new ReportFragment(this);
                 break;
+            case R.id.action_location:
+                fragment = new MapFragment(this,this);
+                break;
         }
 
        return load_fragment(fragment);
+    }
+
+    @Override
+    public void onMapReady(GoogleMap googleMap) {
+
     }
 
     @Override

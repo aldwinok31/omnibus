@@ -3,6 +3,7 @@ package com.ttoonic.flow.Model;
 import android.os.Parcel;
 import android.os.Parcelable;
 
+import java.util.ArrayList;
 import java.util.Date;
 
 public class Fault implements Parcelable {
@@ -14,30 +15,72 @@ public class Fault implements Parcelable {
     private String type;
     private String creator;
     private String category;
-    private Marked marked;
+    private ArrayList<String> marked_safe;
+    private ArrayList<String> marked_unsafe;
+    private Double latitude;
+    private Double longitude;
+    private Date expiration;
+
 
     public void setCreator(String creator) {
         this.creator = creator;
     }
 
-    public Fault(String title,String category, String description, String type, double credibility, Date timestamp, String imgpath, String creator,Marked marked) {
+    public Fault(String title, String description, double credibility, Date timestamp, String imgpath, String type, String creator, String category, ArrayList<String> marked_safe,
+                 ArrayList<String> marked_unsafe, Double latitude, Double longitude, Date expiration) {
         this.title = title;
         this.description = description;
         this.credibility = credibility;
         this.timestamp = timestamp;
         this.imgpath = imgpath;
-        this.creator = creator;
         this.type = type;
+        this.creator = creator;
         this.category = category;
-        this.marked = marked;
+        this.marked_safe = marked_safe;
+        this.marked_unsafe = marked_unsafe;
+        this.latitude = latitude;
+        this.longitude = longitude;
+        this.expiration = expiration;
     }
 
-    public Marked getMarked() {
-        return marked;
+    public Date getExpiration() {
+        return expiration;
     }
 
-    public void setMarked(Marked marked) {
-        this.marked = marked;
+    public void setExpiration(Date expiration) {
+        this.expiration = expiration;
+    }
+
+    public Double getLatitude() {
+        return latitude;
+    }
+
+    public void setLatitude(Double latitude) {
+        this.latitude = latitude;
+    }
+
+    public Double getLongitude() {
+        return longitude;
+    }
+
+    public void setLongitude(Double longitude) {
+        this.longitude = longitude;
+    }
+
+    public ArrayList<String> getMarked_safe() {
+        return marked_safe;
+    }
+
+    public void setMarked_safe( ArrayList<String> marked_safe) {
+        this.marked_safe = marked_safe;
+    }
+
+    public  ArrayList<String> getMarked_unsafe() {
+        return marked_unsafe;
+    }
+
+    public void setMarked_unsafe( ArrayList<String> marked_unsafe) {
+        this.marked_unsafe = marked_unsafe;
     }
 
     public String getCategory() {

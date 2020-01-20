@@ -103,7 +103,6 @@ public class HazardFragment extends BaseFragment{
     public void activityTemperatureChange(Object object) {
         super.activityTemperatureChange(object);
         if(object instanceof Float){
-            Log.d("Data", "activityTemperatureChange: ");
             this.series2.appendData(new DataPoint(size2++,(Float)object),false,10);
             TextView textView = this.view.findViewById(R.id.peak2);
             textView.setText("Highest Celsius "+ this.series2.getHighestValueY());

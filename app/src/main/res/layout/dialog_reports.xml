@@ -11,17 +11,26 @@
         android:padding="20dp"
         android:orientation="vertical"
         android:layout_height="wrap_content">
-        <TextView
-            android:layout_width="match_parent"
-            android:text="INCIDENT DETECTED"
-            android:textAlignment="center"
-            android:id="@+id/alert_incident_dialog"
-            android:layout_height="wrap_content"/>
+           <TextView
+               android:layout_width="match_parent"
+               android:text="INCIDENT DETECTED"
+               android:textAlignment="center"
+               android:id="@+id/alert_incident_dialog"
+               android:layout_height="wrap_content"/>
         <TextView
             android:layout_width="match_parent"
             android:text="ARE YOU SAFE?"
             android:padding="10dp"
             android:textAlignment="center"
+            android:layout_height="wrap_content"/>
+        <TextView
+            android:layout_width="wrap_content"
+            android:layout_gravity="center"
+            android:textSize="24dp"
+            android:text="15"
+            android:textStyle="bold"
+            android:id="@+id/button_second"
+            android:textColor="@color/colorPrimaryDark"
             android:layout_height="wrap_content"/>
         <Button
             android:layout_width="match_parent"
@@ -29,8 +38,9 @@
             android:background="@drawable/rounded"
             android:textColor="#FFF"
             android:id="@+id/button_safe"
-            android:layout_margin="25dp"
+            android:layout_margin="10dp"
             android:layout_height="match_parent"/>
+
 
     </LinearLayout>
 

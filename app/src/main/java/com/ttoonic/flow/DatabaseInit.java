@@ -1,6 +1,7 @@
 package com.ttoonic.flow;
 
 import android.content.SharedPreferences;
+import android.location.Location;
 import android.net.Uri;
 import android.util.Base64;
 import android.util.Log;
@@ -15,10 +16,13 @@ import com.google.android.gms.tasks.OnSuccessListener;
 import com.google.android.gms.tasks.Task;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.Query;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.UploadTask;
@@ -34,6 +38,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.annotation.Nullable;
+
 
 public final class DatabaseInit {
    private final static FirebaseFirestore db = FirebaseFirestore.getInstance();
@@ -68,7 +73,6 @@ public final class DatabaseInit {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if(task.isComplete()){
-
                     if (databaseInteractive != null) {
                         databaseInteractive.onDatabaseSuccess(true,user,"Success");
                     }
@@ -174,10 +178,15 @@ public final class DatabaseInit {
                 }).addOnCompleteListener(new OnCompleteListener<UploadTask.TaskSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<UploadTask.TaskSnapshot> task) {
-                String downloadUrl = task.getResult().getMetadata().getPath();
-                if(databaseInteractive != null){
-                    databaseInteractive.onDatabaseSuccess(false,downloadUrl,"Success");
-                }
+                task.getResult().getStorage().getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+                    @Override
+                    public void onComplete(@NonNull Task<Uri> task) {
+                        if(databaseInteractive != null){
+                            databaseInteractive.onDatabaseSuccess(false,task.getResult().toString(),"Success");
+                        }
+                    }
+                });
+
             }
              }).addOnFailureListener(new OnFailureListener() {
                     @Override
@@ -192,15 +201,6 @@ public final class DatabaseInit {
     }
 
     public void upload_incident_to_firestore(final Fault fault){
-        Map<String,Object> faults = new HashMap<>();
-        fault.setMarked(new Marked());
-       faults.put("title",fault.getTitle());
-       faults.put("desc",fault.getDescription());
-       faults.put("timestamp",fault.getTimestamp());
-       faults.put("type",fault.getType());
-        faults.put("credibility",fault.getCredibility());
-        faults.put("type",fault.getImgpath());
-
         db.collection("fault")
                 .add(fault)
                 .addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
@@ -222,17 +222,117 @@ public final class DatabaseInit {
         });
     }
 
-    public void add_database_listener(final String category){
-        db.collection("fault").whereEqualTo("category",category).addSnapshotListener(new EventListener<QuerySnapshot>() {
+    public void add_database_listener(final String category,final String name){
+        db.collection("fault").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
                 if(!queryDocumentSnapshots.isEmpty()) {
                     for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots) {
                         Fault fault = queryDocumentSnapshot.toObject(Fault.class);
-                        if(fault.getCredibility() >= 0) {
-                            if (databaseInteractive != null) {
-                                databaseInteractive.onDatabaseSuccess(false, fault, queryDocumentSnapshot.getId());
+                        if(!fault.getType().equals("Incident")) {
+                            if (!fault.getMarked_safe().contains(name) && !fault.getMarked_unsafe().contains(name)) {
+                                if (databaseInteractive != null) {
+                                    databaseInteractive.onDatabaseSuccess(false, fault, queryDocumentSnapshot.getId());
+                                }
                             }
+                        }
+                        else{
+                            if(fault.getCategory() == category) {
+                                if (!fault.getMarked_safe().contains(name) && !fault.getMarked_unsafe().contains(name)) {
+                                    if (databaseInteractive != null) {
+                                        databaseInteractive.onDatabaseSuccess(false, fault, queryDocumentSnapshot.getId());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                }
+            }
+        });
+
+    }
+
+
+    public void update_alert(final Object object,final ArrayList<String> id,String safe){
+        for ( String i : id) {
+            String user = ((User) object).getUsername();
+
+            db.collection("fault").document(i).update(safe, FieldValue.arrayUnion(user))
+                    .addOnCompleteListener(new OnCompleteListener<Void>() {
+                        @Override
+                        public void onComplete(@NonNull Task<Void> task) {
+                            if (databaseInteractive != null) {
+                                databaseInteractive.onDatabaseSuccess(false,true, "update");
+                            }
+                        }
+                    }).addOnCanceledListener(new OnCanceledListener() {
+                @Override
+                public void onCanceled() {
+                }
+            })
+            ;
+        }
+    }
+
+    public void get_incidents(final String category){
+        db.collection("fault").orderBy("timestamp", Query.Direction.DESCENDING).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    ArrayList<Fault> faults = new ArrayList<>();
+                    faults.addAll( task.getResult().toObjects(Fault.class));
+
+                        if (databaseInteractive != null) {
+                            databaseInteractive.onDatabaseSuccess(false, faults,"");
+                        }
+
+            }
+        });
+    }
+    public String get_path(String path){
+        StorageReference storageReference = FirebaseStorage.getInstance().getReference();
+        storageReference.child(path).getDownloadUrl().addOnCompleteListener(new OnCompleteListener<Uri>() {
+            @Override
+            public void onComplete(@NonNull Task<Uri> task) {
+                if (databaseInteractive != null) {
+                    databaseInteractive.onDatabaseSuccess(false,task.getResult(), "get list");
+                }
+            }
+        });
+        return "";
+    }
+
+    public void get_user(final String name){
+        db.collection("users").whereEqualTo("username",name).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
+                    if (databaseInteractive != null) {
+                        databaseInteractive.onDatabaseSuccess(false, documentSnapshot.toObject(User.class), "get list");
+                    }
+                }
+            }
+        });
+    }
+    public void update_location(String name, Location location){
+    db.collection("gps_provider").document(name).set(location,SetOptions.merge()).addOnSuccessListener(new OnSuccessListener<Void>() {
+        @Override
+        public void onSuccess(Void aVoid) {
+            if (databaseInteractive != null) {
+                databaseInteractive.onDatabaseSuccess(false, aVoid, "Update GPS");
+            }
+        }
+    });
+    }
+
+    public void get_locations(final String name){
+        db.collection("gps_provider").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                for (QueryDocumentSnapshot queryDocumentSnapshot : queryDocumentSnapshots){
+                    if(queryDocumentSnapshot.getId() != name) {
+                        if (databaseInteractive != null) {
+                            databaseInteractive.onDatabaseSuccess(false,queryDocumentSnapshot.toObject(Location.class)
+                                    ,"Update" );
                         }
                     }
                 }
@@ -240,21 +340,4 @@ public final class DatabaseInit {
         });
     }
 
-
-    public void update_alert(final Object object,final ArrayList<String> id){
-        for ( String i : id) {
-            Marked marked = new Marked();
-            marked.setSafe("Safe");
-            marked.setUser((User) object);
-            marked.setUsername(((User) object).getUsername());
-            db.collection("fault").document(i).collection("marked").add(marked).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
-                @Override
-                public void onComplete(@NonNull Task<DocumentReference> task) {
-                    if (databaseInteractive != null) {
-                        databaseInteractive.onDatabaseSuccess(false,true, "update");
-                    }
-                }
-            });
-        }
-    }
 }

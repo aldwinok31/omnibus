@@ -23,4 +23,9 @@
         android:icon="@drawable/ic_notifications_black_24dp"
         >
     </item>
+    <item android:title="Location"
+        android:id="@+id/action_location"
+        android:icon="@drawable/ic_location_on_black_24dp"
+        >
+    </item>
 </menu>

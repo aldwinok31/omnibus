@@ -1,10 +1,14 @@
 package com.ttoonic.flow.Fragment;
 
+import android.Manifest;
 import android.app.Activity;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Color;
+import android.location.Location;
+import android.location.LocationManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Environment;
@@ -15,6 +19,7 @@ import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
@@ -24,6 +29,7 @@ import android.widget.Toast;
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.cardview.widget.CardView;
+import androidx.core.content.ContextCompat;
 
 import com.ttoonic.flow.DatabaseInit;
 import com.ttoonic.flow.Interface.DatabaseInteractive;
@@ -37,8 +43,11 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
+
+import static android.content.Context.LOCATION_SERVICE;
 
 public class SendReportFragment extends BaseFragment implements View.OnClickListener, DatabaseInteractive {
     private View view;
@@ -68,6 +77,7 @@ public class SendReportFragment extends BaseFragment implements View.OnClickList
         flood.setOnClickListener(this);
         quake.setOnClickListener(this);
         incident.setOnClickListener(this);
+        CheckBox checkbox = this.view.findViewById(R.id.safe_box);
     }
     @Override
     public void activityCallback(Object object) {
@@ -214,17 +224,44 @@ public class SendReportFragment extends BaseFragment implements View.OnClickList
                 Toast.makeText(getContext(), "Upload not complete", Toast.LENGTH_SHORT).show();
                 return;
             }
+            CheckBox checkbox = this.view.findViewById(R.id.safe_box);
             if(valids == 0){
+                this.interactive.onFragmentInteract(this,true);
+                this.fault = new Fault();
+                this.fault.setTitle(title.getText().toString());
+                this.fault.setDescription(desc.getText().toString());
+                this.fault.setCredibility(0.0);
+                this.fault.setType(incident);
+                this.fault.setCreator(this.user.getUsername());
+                this.fault.setCategory(this.user.getTeam());
 
-                    this.interactive.onFragmentInteract(this,true);
+                Location last_location;
+                if (ContextCompat.checkSelfPermission(getContext(),
+                        Manifest.permission.ACCESS_FINE_LOCATION)
+                        == PackageManager.PERMISSION_GRANTED) {
+                    LocationManager locationManager = (LocationManager) getActivity().getSystemService(LOCATION_SERVICE);
+                   last_location = locationManager.getLastKnownLocation(LocationManager.NETWORK_PROVIDER);
+                   this.fault.setLatitude(last_location.getLatitude());
+                   this.fault.setLongitude(last_location.getLongitude());
+                }
 
-                    this.fault = new Fault();
-                    this.fault.setTitle(title.getText().toString());
-                    this.fault.setDescription(desc.getText().toString());
-                    this.fault.setCredibility(0.0);
-                    this.fault.setType(incident);
-                    this.fault.setCreator(this.user.getUsername());
-                    this.fault.setCategory(this.user.getTeam());
+
+                if(checkbox.isChecked()){
+                    ArrayList<String> arrayList = new ArrayList<>();
+                    ArrayList<String> arrayList2 = new ArrayList<>();
+
+                    arrayList.add(this.user.getUsername());
+                    this.fault.setMarked_safe(arrayList);
+                    this.fault.setMarked_unsafe(arrayList2);
+                }
+                else{
+                    ArrayList<String> arrayList = new ArrayList<>();
+                    ArrayList<String> arrayList2 = new ArrayList<>();
+
+                    arrayList.add(this.user.getUsername());
+                    this.fault.setMarked_unsafe(arrayList);
+                    this.fault.setMarked_safe(arrayList2);
+                }
 
 
                     String file_path = persistImage(this.bitmap,this.fault.getTitle());
@@ -262,8 +299,14 @@ public class SendReportFragment extends BaseFragment implements View.OnClickList
         this.interactive.onFragmentInteract(this,false);
         if (object instanceof String){
             this.fault.setImgpath(object.toString());
-            Date currentTime = Calendar.getInstance().getTime();
-            this.fault.setTimestamp(currentTime);
+
+            Calendar currentTime = Calendar.getInstance();
+            Date today = currentTime.getTime();
+            currentTime.add(Calendar.DAY_OF_YEAR,1);
+            Date tomorrow = currentTime.getTime();
+
+            this.fault.setTimestamp(today);
+            this.fault.setExpiration(tomorrow);
             this.databaseInit.upload_incident_to_firestore(this.fault);
             return;
         }

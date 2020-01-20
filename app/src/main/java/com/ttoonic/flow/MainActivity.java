@@ -1,6 +1,8 @@
 package com.ttoonic.flow;
 
 
+import android.app.AlertDialog;
+import android.content.Context;
 import android.os.Bundle;
 
 import com.ttoonic.flow.Activity.Activity_Fragment_Holder;
@@ -20,5 +22,6 @@ public class MainActivity extends BaseActivity {
         app_timer_to_activity(1000,3000, Auth_Activity.class).start();
         return false;
     }
+
 
 }
