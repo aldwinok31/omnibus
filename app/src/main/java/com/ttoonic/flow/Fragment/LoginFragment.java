@@ -96,6 +96,11 @@ public class LoginFragment extends BaseFragment implements View.OnClickListener,
         }
     }
 
+    @Override
+    public void onFailure(boolean data, String message) {
+        Toast.makeText(getContext(), message, Toast.LENGTH_SHORT).show();
+    }
+
 
     public void showDialog(){
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();

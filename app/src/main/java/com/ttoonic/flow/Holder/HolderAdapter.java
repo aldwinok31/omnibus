@@ -140,6 +140,11 @@ public class HolderAdapter extends RecyclerView.Adapter<Holder>  {
                }
             }
 
+            @Override
+            public void onFailure(boolean data, String message) {
+
+            }
+
         });
 
         databaseInit.get_user(title);

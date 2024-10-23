@@ -111,14 +111,14 @@ public class ReportFragment extends BaseFragment implements View.OnClickListener
     public void onDatabaseSuccess(boolean data, Object object, String message) {
         if (object instanceof ArrayList) {
             this.faults = (ArrayList<Fault>) object;
+            ArrayList<Fault> faultArrayList = new ArrayList<Fault>();
             for(Fault fault1 : this.faults) {
-               if (fault1.getType().equals("Incident") && !(fault1.getCategory().equals(user.getTeam()))){
-                   this.faults.remove(fault1);
+               if (!fault1.getType().equals("Incident") && (fault1.getCategory().equals(user.getTeam()))){
+                   faultArrayList.add(fault1);
               }
                else {
-                   if (new Date().after(fault1.getExpiration())) {
-                       this.faults.remove(fault1);
-
+                   if (new Date().before(fault1.getExpiration())) {
+                       faultArrayList.add(fault1);
                    }
                }
             }
@@ -130,6 +130,11 @@ public class ReportFragment extends BaseFragment implements View.OnClickListener
             }
             this.holderAdapter.notifyDataSetChanged();
         }
+    }
+
+    @Override
+    public void onFailure(boolean data, String message) {
+
     }
 
     @Override

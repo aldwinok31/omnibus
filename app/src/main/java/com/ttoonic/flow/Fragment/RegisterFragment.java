@@ -126,6 +126,11 @@ public class RegisterFragment extends BaseFragment implements View.OnClickListen
         }
     }
 
+    @Override
+    public void onFailure(boolean data, String message) {
+
+    }
+
     public void showDialog(){
         LayoutInflater layoutInflater = getActivity().getLayoutInflater();
         View view = layoutInflater.inflate(R.layout.dialog_logas_picker,null);

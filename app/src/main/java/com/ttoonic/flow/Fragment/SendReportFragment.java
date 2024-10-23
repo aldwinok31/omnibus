@@ -314,4 +314,9 @@ public class SendReportFragment extends BaseFragment implements View.OnClickList
             Toast.makeText(getContext(), "Successfully Uploaded", Toast.LENGTH_SHORT).show();
         }
     }
+
+    @Override
+    public void onFailure(boolean data, String message) {
+
+    }
 }

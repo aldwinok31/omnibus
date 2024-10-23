@@ -310,6 +310,11 @@ public class Activity_Fragment_Holder extends TabBaseActivity implements SensorE
     }
 
     @Override
+    public void onFailure(boolean data, String message) {
+
+    }
+
+    @Override
     public void onClick(View v) {
         if(v.getId() == R.id.button_safe) {
             if (this.fault != null){

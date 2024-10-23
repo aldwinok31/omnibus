@@ -106,6 +106,12 @@ public final class DatabaseInit {
                @Override
                public void onComplete(@NonNull Task<QuerySnapshot> task) {
                    if (task.isComplete()) {
+                       if(task.getResult().isEmpty()){
+                           if (databaseInteractive != null) {
+                               databaseInteractive.onFailure(false,"Account not Found");
+                           }
+                               return;
+                       }
                        for (QueryDocumentSnapshot documentSnapshot : task.getResult()) {
                            if (documentSnapshot.contains("team")) {
                                if (databaseInteractive != null) {
@@ -122,6 +128,8 @@ public final class DatabaseInit {
                            }
                            break;
                        }
+
+                   }else{
 
                    }
                }
